@@ -34,27 +34,23 @@
                 <button @click="showSettingDialog = true"
                     class="button-style border-none outline-none d-flex flex-column flex-center radius-20 bg-neutral-400"
                     style="width: 40px; height: 40px;">
-                    <Icon icon="solar:settings-bold" width="30" class="text-white" />
+                    <Icon icon="solar:settings-bold" width="30" style="transform: translateX(-1px);"
+                        class="text-white" />
                 </button>
-
                 <button @click="showInfoDialog = true"
                     class="button-style border-none outline-none d-flex flex-column flex-center radius-20 bg-neutral-400"
                     style="width: 40px; height: 40px;">
                     <Icon icon="solar:info-circle-bold" width="30" class="text-white" />
                 </button>
-
-                <button
+                <button @click="showHotSpotDialog = true"
                     class="button-style border-none outline-none d-flex flex-column flex-center radius-20 bg-neutral-400"
                     style="width: 40px; height: 40px;">
                     <Icon icon="solar:bluetooth-wave-bold" width="30" class="text-white" />
                 </button>
             </div>
-
-            <!-- متن وسط -->
             <div class="d-flex flex-1 flex-center text-white gap-2">
                 <p>&copy; {{ new Date().getFullYear() }} copyright</p>
             </div>
-
             <div class="d-flex flex-1 text-neutral-800 align-center gap-2">
                 <p></p>
             </div>
@@ -125,6 +121,16 @@
                 </p>
             </div>
         </Dialog>
+        <Dialog :model-value="showHotSpotDialog" class="text-white"
+            @dialog:close="showHotSpotDialog = !showHotSpotDialog">
+            <template v-slot:title>
+                <div class="d-flex flex-space-between width-full gap-4">
+                    <Icon icon="solar:close-circle-bold" @click="showHotSpotDialog = !showHotSpotDialog" width="30"
+                        class="text-red-500 cursor-pointer" />
+                    <h3>hotspot setting</h3>
+                </div>
+            </template>
+        </Dialog>
     </div>
 </template>
 
@@ -136,6 +142,7 @@ import { ref } from 'vue';
 import { RouterLink } from 'vue-router'
 const showSettingDialog = ref(false);
 const showInfoDialog = ref(false);
+const showHotSpotDialog = ref(false);
 const useLanguage = useLanguageStore();
 </script>
 
