@@ -9,22 +9,22 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: Default,
-    children: [{ path: '', component: Home }]
+    children: [{ path: '', component: Home }],
   },
   {
     path: '/humanMode',
     component: Default,
-    children: [{ path: '', component: HumanMode }]
+    children: [{ path: '', component: HumanMode }],
   },
   {
     path: '/aiMode',
     component: Default,
-    children: [{ path: '', component: AIMode }]
+    children: [{ path: '', component: AIMode }],
   },
   {
     path: '/emergency',
     component: Default,
-    children: [{ path: '', component: Emergency }]
+    children: [{ path: '', component: Emergency }],
   },
 ]
 const router = createRouter({

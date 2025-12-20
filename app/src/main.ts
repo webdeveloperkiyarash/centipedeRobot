@@ -1,14 +1,14 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 // @ts-ignore
-import { SplashScreen } from '@capacitor/splash-screen';
-import 'mini-k-tailwind/skeleton.css';
-import './assets/styles.scss';
-SplashScreen.hide();
+import { SplashScreen } from '@capacitor/splash-screen'
+import 'mini-k-tailwind/skeleton.css'
+import './assets/styles.scss'
+SplashScreen.hide()
 
 import App from './App.vue'
 import router from './router'
-import i18n from './lang/i18n';
+import i18n from './lang/i18n'
 
 const app = createApp(App)
 
