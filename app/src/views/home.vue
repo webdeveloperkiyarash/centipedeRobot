@@ -1,53 +1,47 @@
 <template>
     <div class="d-flex flex-column width-window height-window overflow-hidden bg-neutral-800">
         <div class="position-absolute top left">
-            <h1 class="font-size-12 font-700 text-white">tinco</h1>
+            <h1 class="font-size-12 font-700 text-white">Tinco</h1>
         </div>
         <div class="d-flex flex-column flex-center gap-4 position-absolute center right">
             <RouterLink style="width: 160px;"
                 class="button-style text-white text-center px-6 font-size-5 bg-neutral-500 radius-10 py-2 font-500"
                 to="/aiMode">
-                AI mode
+                {{ $t('home.aiMode') }}
             </RouterLink>
 
             <RouterLink style="width: 160px;"
                 class="button-style text-white text-center px-6 font-size-5 bg-neutral-500 radius-10 py-2 font-500"
                 to="/humanMode">
-                joystick
+                {{ $t('home.humanMode') }}
             </RouterLink>
 
             <RouterLink style="width: 160px;"
                 class="button-style text-white text-center px-6 font-size-5 bg-neutral-500 radius-10 py-2 font-500"
                 to="/emergency">
-                emergency
+                {{ $t('home.emergency') }}
             </RouterLink>
         </div>
-        <div class="bottom position-absolute width-full px-4 d-flex flex-space-between">
 
-            <!-- دکمه‌های سمت چپ -->
-            <div class="d-flex flex-1 align-center gap-2">
-                <button @click="useLanguage.toggleLanguage()"
+        <div class="bottom position-absolute width-full px-4 d-flex flex-space-between"> <!-- دکمه‌های سمت چپ -->
+            <div class="d-flex flex-1 align-center gap-2"> <button @click="useLanguage.toggleLanguage()"
                     class="button-style border-none outline-none d-flex flex-column flex-center radius-20 bg-neutral-400"
                     style="width: 40px; height: 40px;">
                     <Icon :icon="useLanguage.languageIcon" width="30" class="text-white" />
-                </button>
-                <button @click="showSettingDialog = true"
+                </button> <button @click="showSettingDialog = true"
                     class="button-style border-none outline-none d-flex flex-column flex-center radius-20 bg-neutral-400"
                     style="width: 40px; height: 40px;">
                     <Icon icon="solar:settings-bold" width="30" style="transform: translateX(-1px);"
                         class="text-white" />
-                </button>
-                <button @click="showInfoDialog = true"
+                </button> <button @click="showInfoDialog = true"
                     class="button-style border-none outline-none d-flex flex-column flex-center radius-20 bg-neutral-400"
                     style="width: 40px; height: 40px;">
                     <Icon icon="solar:info-circle-bold" width="30" class="text-white" />
-                </button>
-                <button @click="showHotSpotDialog = true"
+                </button> <button @click="showHotSpotDialog = true"
                     class="button-style border-none outline-none d-flex flex-column flex-center radius-20 bg-neutral-400"
                     style="width: 40px; height: 40px;">
                     <Icon icon="solar:bluetooth-wave-bold" width="30" class="text-white" />
-                </button>
-            </div>
+                </button> </div>
             <div class="d-flex flex-1 flex-center text-white gap-2">
                 <p>&copy; {{ new Date().getFullYear() }} copyright</p>
             </div>
@@ -55,117 +49,85 @@
                 <p></p>
             </div>
         </div>
-        <Dialog :model-value="showSettingDialog" class="text-white"
-            @dialog:close="showSettingDialog = !showSettingDialog">
+
+        <Dialog :model-value="showSettingDialog" :dir="useLanguageStore().language == 'fa' ? 'rtl' : 'ltr'"
+            class="text-white" @dialog:close="showSettingDialog = !showSettingDialog">
             <template v-slot:title>
                 <div class="d-flex flex-space-between width-full gap-4">
                     <Icon icon="solar:close-circle-bold" @click="showSettingDialog = !showSettingDialog" width="30"
                         class="text-red-500 cursor-pointer" />
-                    <h3>settings</h3>
+                    <h3>{{ $t('home.settings') }}</h3>
                 </div>
             </template>
             <div class="width-full d-flex flex-column gap-4">
                 <div class="d-flex align-center gap-2">
-                    <strong>theme:</strong>
+                    <strong>{{ $t('home.theme') }}</strong>
                     <div class="d-flex cursor-pointer text-white align-center gap-1">
                         <Icon icon="solar:moon-stars-bold" width="30" />
-                        <p>dark</p>
+                        <p>{{ $t('home.dark') }}</p>
                     </div>
                     <div class="d-flex cursor-pointer text-white align-center gap-1">
                         <Icon class="text-yellow-400" icon="solar:sun-bold" width="30" />
-                        <p>light</p>
+                        <p>{{ $t('home.light') }}</p>
                     </div>
                 </div>
                 <div class="d-flex align-center gap-2">
-                    <strong>joystick:</strong>
+                    <strong>{{ $t('home.joystick') }}</strong>
                     <div class="d-flex cursor-pointer text-white align-center gap-1">
                         <Icon icon="bx:joystick" width="40" />
-                        <p>ps4</p>
+                        <p>{{ $t('home.ps4') }}</p>
                     </div>
                     <div class="d-flex cursor-pointer text-white align-center gap-1">
                         <Icon icon="icon-park-outline:game-ps" width="30" />
-                        <p>ps5</p>
+                        <p>{{ $t('home.ps5') }}</p>
                     </div>
                 </div>
-                <button class="button-style border-none outline-none text-white text-center px-6 font-size-5 bg-neutral-500 radius-10 py-2
-                    font-500">
-                    save
+                <button
+                    class="button-style border-none outline-none text-white text-center px-6 font-size-5 bg-neutral-500 radius-10 py-2 font-500">
+                    {{ $t('home.save') }}
                 </button>
             </div>
         </Dialog>
-        <Dialog :model-value="showInfoDialog" class="text-white" @dialog:close="showInfoDialog = !showInfoDialog">
+
+        <!-- Info Dialog -->
+        <Dialog :model-value="showInfoDialog" :dir="useLanguageStore().language == 'fa' ? 'rtl' : 'ltr'"
+            class="text-white" @dialog:close="showInfoDialog = !showInfoDialog">
             <template v-slot:title>
                 <div class="d-flex flex-space-between width-full gap-4">
                     <Icon icon="solar:close-circle-bold" @click="showInfoDialog = !showInfoDialog" width="30"
                         class="text-red-500 cursor-pointer" />
-                    <h3>info</h3>
+                    <h3>{{ $t('home.info') }}</h3>
                 </div>
             </template>
             <div class="d-flex flex-column gap-3">
-
-                <!-- Version -->
                 <div class="d-flex flex-column">
-                    <h4 class="font-700 text-white">Version</h4>
+                    <h4 class="font-700 text-white">{{ $t('home.version') }}</h4>
                     <p class="text-neutral-300 font-size-4">1.0.0</p>
                 </div>
-
-                <p class="text-neutral-300 font-size-4">
-                    Tinco stands for <strong>Triad Intelligence Nexus Centipede Operation</strong>;
-                    a multi‑part project aimed at building an intelligent, controllable, and extensible centipede robot.
-                    This robot is designed by combining artificial intelligence, image processing, and modern
-                    communication technologies.
-                    Its applications can include environmental monitoring, rescue operations, robotics education, and
-                    even scientific entertainment.
-                    The ultimate goal is to create a platform that is usable and expandable both for researchers and
-                    everyday users.
-                </p>
+                <p class="text-neutral-300 font-size-4">{{ $t('home.description') }}</p>
             </div>
         </Dialog>
-        <Dialog :model-value="showHotSpotDialog" class="text-white"
-            @dialog:close="showHotSpotDialog = !showHotSpotDialog">
+
+        <!-- Hotspot Dialog -->
+        <Dialog :model-value="showHotSpotDialog" :dir="useLanguageStore().language == 'fa' ? 'rtl' : 'ltr'"
+            class="text-white" @dialog:close="showHotSpotDialog = !showHotSpotDialog">
             <template v-slot:title>
                 <div class="d-flex flex-space-between width-full gap-4">
                     <Icon icon="solar:close-circle-bold" @click="showHotSpotDialog = !showHotSpotDialog" width="30"
                         class="text-red-500 cursor-pointer" />
-                    <h3>hotspot setting</h3>
+                    <h3>{{ $t('home.hotspot') }}</h3>
                 </div>
             </template>
             <div class="d-flex flex-column gap-4 width-full pa-2">
                 <div class="width-full d-flex flex-space-between gap-4 px-2 py-2 bg-neutral-400 radius-2">
-                    <div class="d-flex align-center gap-2">
+                    <div v-for="item in 3" class="d-flex align-center gap-2">
                         <img src="/images/robot.jpg" class="avatar radius-3" alt="" />
-                        <strong>robot 1</strong>
+                        <strong>{{ $t('home.robot') }} {{ item }}</strong>
                     </div>
                     <div class="d-flex flex-space-between gap-2">
                         <button
                             class="button-style-success px-4 py-2 radius-2 d-flex flex-center gap-1 border-none outline-none bg-emerald-500 text-white">
-                            connect
-                            <Icon icon="solar:bluetooth-wave-bold" width="15" />
-                        </button>
-                    </div>
-                </div>
-                <div class="width-full d-flex flex-space-between gap-4 px-2 py-2 bg-neutral-400 radius-2">
-                    <div class="d-flex align-center gap-2">
-                        <img src="/images/robot.jpg" class="avatar radius-3" alt="" />
-                        <strong>robot 2</strong>
-                    </div>
-                    <div class="d-flex flex-space-between gap-2">
-                        <button
-                            class="button-style-success px-4 py-2 radius-2 d-flex flex-center gap-1 border-none outline-none bg-emerald-500 text-white">
-                            connect
-                            <Icon icon="solar:bluetooth-wave-bold" width="15" />
-                        </button>
-                    </div>
-                </div>
-                <div class="width-full d-flex flex-space-between gap-4 px-2 py-2 bg-neutral-400 radius-2">
-                    <div class="d-flex align-center gap-2">
-                        <img src="/images/robot.jpg" class="avatar radius-3" alt="" />
-                        <strong>robot 3</strong>
-                    </div>
-                    <div class="d-flex flex-space-between gap-2">
-                        <button
-                            class="button-style-success px-4 py-2 radius-2 d-flex flex-center gap-1 border-none outline-none bg-emerald-500 text-white">
-                            connect
+                            {{ $t('home.connect') }}
                             <Icon icon="solar:bluetooth-wave-bold" width="15" />
                         </button>
                     </div>
@@ -175,11 +137,13 @@
     </div>
 </template>
 
+
 <script setup lang="ts">
 import Dialog from '@/components/ui/dialog.vue';
 import { useLanguageStore } from '@/stores/useLanguage';
 import { Icon } from '@iconify/vue'
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router'
 const showSettingDialog = ref(false);
 const showInfoDialog = ref(false);

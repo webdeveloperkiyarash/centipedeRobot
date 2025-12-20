@@ -71,43 +71,38 @@ const { x, arrivedState } = useScroll(scrollContainer)
     <div ref="container"
         class="d-flex width-window overflow-hidden flex-center height-window flex-column gap-4 text-center">
         <video ref="video" autoplay class="width-full position-relative" />
-
-        <!-- Back Button -->
         <RouterLink to="/"
             class="button-style-2 position-absolute top left border-none outline-none d-flex align-flex-start radius-2 bg-neutral-700">
             <Icon icon="solar:arrow-left-linear" class="text-white" width="35" />
         </RouterLink>
-
-        <!-- Bottom Controls -->
         <div class="bottom position-absolute d-flex flex-center gap-1 flex-column width-full">
             <div class="scroll-wrapper" style="z-index: 1000 !important;">
                 <div ref="scrollContainer" class="d-flex align-center gap-4 pa-2 overflow-x-auto scroll-container"
                     style="width: 100%; z-index: 1000 !important;">
-                    <button style="width: fit-content; text-wrap: nowrap;"
+                    <button
                         class="button-style-2 d-flex pa-2 text-white flex-center radius-20 bg-neutral-700 border-none outline-none">
-                        go forward
+                        {{ $t('ai.forward') }}
                     </button>
-                    <button style="width: fit-content; text-wrap: nowrap;"
+                    <button
                         class="button-style-2 d-flex pa-2 text-white flex-center radius-20 bg-neutral-700 border-none outline-none">
-                        go backward
+                        {{ $t('ai.backward') }}
                     </button>
-                    <button style="width: fit-content; text-wrap: nowrap;"
+                    <button
                         class="button-style-2 d-flex pa-2 text-white flex-center radius-20 bg-neutral-700 border-none outline-none">
-                        turn 90deg
+                        {{ $t('ai.turn') }}
                     </button>
-                    <button style="width: fit-content; text-wrap: nowrap;"
+                    <button
                         class="button-style-2 d-flex pa-2 text-white flex-center radius-20 bg-neutral-700 border-none outline-none">
-                        go forward and turn 90deg
+                        {{ $t('ai.forwardTurn') }}
                     </button>
-                    <button style="width: fit-content; text-wrap: nowrap;"
+                    <button
                         class="button-style-2 d-flex pa-2 text-white flex-center radius-20 bg-neutral-700 border-none outline-none">
-                        jump
+                        {{ $t('ai.jump') }}
                     </button>
                 </div>
                 <div v-if="!arrivedState.left" class="fade-left"></div>
                 <div v-if="!arrivedState.right" class="fade-right"></div>
             </div>
-            <!-- Voice Button -->
             <button @click="toggleVoice"
                 :class="['button-style-2 d-flex pa-2 text-white flex-center radius-20 bg-neutral-700 border-none outline-none voice-btn', { 'recording': isListening }]"
                 style="width: fit-content;">
@@ -116,6 +111,7 @@ const { x, arrivedState } = useScroll(scrollContainer)
         </div>
     </div>
 </template>
+
 
 <style lang="scss" scoped>
 /* 🎤 Voice Button Pulse Effect */
