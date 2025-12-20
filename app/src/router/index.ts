@@ -1,5 +1,6 @@
 import Default from '@/layouts/default.vue'
 import AIMode from '@/views/AIMode.vue'
+import Emergency from '@/views/emergency.vue'
 import Home from '@/views/home.vue'
 import HumanMode from '@/views/humanMode.vue'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
@@ -19,6 +20,11 @@ const routes: RouteRecordRaw[] = [
     path: '/aiMode',
     component: Default,
     children: [{ path: '', component: AIMode }]
+  },
+  {
+    path: '/emergency',
+    component: Default,
+    children: [{ path: '', component: Emergency }]
   },
 ]
 const router = createRouter({
