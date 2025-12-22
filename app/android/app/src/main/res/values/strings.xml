@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">tinco</string>
+    <string name="title_activity_main">tinco</string>
+    <string name="package_name">com.tinco.app</string>
+    <string name="custom_url_scheme">com.tinco.app</string>
+</resources>
