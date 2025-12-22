@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.tinco.app',
-  appName: 'app',
+  appName: 'tinco',
   webDir: 'dist',
   plugins: {
     SplashScreen: {
@@ -10,8 +10,8 @@ const config: CapacitorConfig = {
       launchAutoHide: true,     // بعد از لود شدن Vue مخفی شود
       backgroundColor: "#000000", // رنگ پس‌زمینه
       androidScaleType: "CENTER_CROP",
-      showSpinner: false
+      showSpinner: true
     }
-  };
+  }
 }
 export default config;
