@@ -8,12 +8,13 @@
                     <strong :class="theme.switchPrimaryClass">robot {{ item }}</strong>
                 </div>
                 <div class="d-flex flex-space-between gap-2">
-                    <button
-                        class="button-style-success px-4 py-2 radius-2 d-flex flex-center gap-1 border-none outline-none"
-                        :class="theme.colors === 'black' ? 'bg-emerald-600 text-white' : 'bg-emerald-400 text-white'
-                            ">
-                        connect
-                        <Icon icon="solar:bluetooth-wave-bold" width="15" />
+                    <button @click="emit('connect', `r${item}`)"
+                        class="px-4 py-2 radius-2 transition-fast d-flex flex-center gap-1 cursor-pointer border-none outline-none"
+                        :class="connectedRobots[`r${item}`]
+                            ? (theme.colors === 'black' ? 'bg-red-600 text-white' : 'bg-red-400 text-white')
+                            : (theme.colors === 'black' ? 'bg-emerald-600 text-white' : 'bg-emerald-400 text-white')">
+                        {{ connectedRobots[`r${item}`] ? 'disconnect' : 'connect' }}
+                        <Icon icon="solar:bluetooth-wave-bold" width="20" />
                     </button>
                 </div>
             </div>
@@ -22,10 +23,11 @@
 </template>
 
 <script setup lang="ts">
+import { Icon } from '@iconify/vue';
 import { useThemeStore } from '../../stores/useTheme';
 import Dialog from '../dialog.vue'
-defineProps<{ modelValue: boolean }>()
-const emit = defineEmits(['update:modelValue'])
+defineProps<{ modelValue: boolean; connectedRobots: Record<string, boolean> }>()
+const emit = defineEmits(['update:modelValue', 'connect'])
 const theme = useThemeStore();
 </script>
 
@@ -61,12 +63,12 @@ body.theme-light .button-style-success {
     color: #000;
 }
 
-.button-style-success:hover {
+button:hover {
     background-color: rgba(1, 102, 48, 0.9);
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.18);
 }
 
-.button-style-success:active {
+button:active {
     transform: scale(0.94);
     background-color: rgba(3, 46, 21, 0.8);
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);

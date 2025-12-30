@@ -6,29 +6,41 @@
             <h1>robot network simulator</h1>
             <IconButton @click="showEmergencyDialog = true" theme="red" use-absolute direction="top: 2px; left: 2px"
                 icon-size="30" icon="solar:shield-warning-bold" />
-            <IconButton @click="showHotSpotDialog = true" theme="blue" use-absolute direction="top: 2px; right: 2px"
-                icon-size="30" icon="solar:bluetooth-bold" />
+            <IconButton style="z-index: 100 !important;" @click="showHotSpotDialog = true" theme="blue" use-absolute
+                direction="top: 2px; right: 2px" icon-size="30" icon="solar:bluetooth-bold" />
         </header>
 
         <!-- Main Content -->
         <div class="flex-1 d-flex flex-center width-full height-full position-relative flex-column">
-            <!-- ✅ Robot Card Component -->
-            <RobotCard :selectedRobot="selectedRobot" />
+            <!-- ✅ اگر هیچ رباتی وصل نیست -->
+            <div v-if="!anyConnected" class="d-flex flex-column flex-center gap-4">
+                <img src="/images/no-connection.png" alt="no connection" style="width:400px; opacity:0.8;" />
+                <p class="text-center font-bold">
+                    You are not connected to any robot, please connect to one.
+                </p>
+            </div>
 
+            <!-- ✅ اگر حداقل یک ربات وصل است -->
+            <template v-else>
+                <!-- Robot Card -->
+                <RobotCard :selectedRobot="selectedRobot" />
+                <!-- Side Tabs (فقط برای ربات‌های وصل‌شده) -->
+                <div class="side-tab-container">
+                    <button v-for="r in connectedRobotList" :key="r" @click="selectedRobot = r" class="side-tab" :class="selectedRobot === r
+                        ? 'bg-red-500 font-bold'
+                        : theme.colors === 'black'
+                            ? 'bg-neutral-600'
+                            : 'bg-neutral-300'">
+                        <p>{{ r.replace('r', 'robot ') }}</p>
+                    </button>
+                </div>
+            </template>
             <!-- Side Controls -->
             <div class="d-flex flex-column flex-center height-full gap-6 position-absolute"
                 style="bottom: 0; top: 0; left: 2px">
                 <IconButton theme="default" icon-size="30" @click="theme.toggleTheme()"
                     :icon="theme.colors == 'white' ? 'solar:moon-stars-bold' : 'solar:sun-bold'" />
                 <IconButton theme="default" icon-size="30" icon="circle-flags:fa" />
-            </div>
-
-            <!-- Side Tabs -->
-            <div class="side-tab-container">
-                <button v-for="(r) in ['r1', 'r2', 'r3']" :key="r" @click="selectedRobot = r" class="side-tab"
-                    :class="selectedRobot === r ? 'bg-red-500 font-bold' : (theme.colors === 'black' ? 'bg-neutral-600' : 'bg-neutral-300')">
-                    <p>{{ r.replace('r', 'robot ') }}</p>
-                </button>
             </div>
         </div>
 
@@ -37,20 +49,21 @@
             <IconButton @click="showGroupCommandDialog = true" theme="default" use-absolute
                 direction="bottom: 2px; left: 2px" icon-size="30" icon="solar:users-group-two-rounded-bold" />
             <p>{{ new Date().getFullYear() }} &copy; copyright</p>
-            <IconButton @click="showLogDialogs = true" theme="blue" use-absolute direction="bottom: 2px; right: 2px"
-                icon-size="30" icon="solar:info-circle-bold" />
+            <IconButton style="z-index: 100 !important;" @click="showLogDialogs = true" theme="blue" use-absolute
+                direction="bottom: 2px; right: 2px" icon-size="30" icon="solar:info-circle-bold" />
         </footer>
 
         <!-- Dialogs -->
         <EmergencyDialog v-model="showEmergencyDialog" />
         <LogsDialog v-model="showLogDialogs" :logs="logs" />
-        <HotSpotDialog v-model="showHotSpotDialog" />
+        <HotSpotDialog v-if="serviceStatus" v-model="showHotSpotDialog" :connectedRobots="connectedRobots"
+            @connect="handleHotspotConnect" @open="fetchLogs" />
         <GroupCommandDialog v-model="showGroupCommandDialog" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useThemeStore } from './stores/useTheme'
 
 import IconButton from './components/iconButton.vue'
@@ -59,6 +72,8 @@ import EmergencyDialog from './components/template/emergencyDialog.vue'
 import GroupCommandDialog from './components/template/GroupCommandDialog.vue'
 import HotSpotDialog from './components/template/hotSpotDialog.vue'
 import LogsDialog from './components/template/logsDialog.vue'
+import { getCommandLogs } from './apis/log'
+import { startHotspot, stopHotspot, getHotspotStatus } from './apis/hotspot'
 
 const theme = useThemeStore()
 const selectedRobot = ref<'r1' | 'r2' | 'r3' | string>('r1')
@@ -67,15 +82,63 @@ const showEmergencyDialog = ref(false)
 const showGroupCommandDialog = ref(false)
 const showHotSpotDialog = ref(false)
 const showLogDialogs = ref(false)
+const serviceStatus = ref(false)
 
-const logs = ref([
-    { time: '2025-12-29 22:10', message: 'System started.' },
-    { time: '2025-12-29 22:12', message: 'Connection established with robot 1.' },
-    { time: '2025-12-29 22:13', message: 'Emergency mode activated.' },
-    { time: '2025-12-29 22:14', message: 'Database connection checked.' },
-    { time: '2025-12-29 22:15', message: 'User logged in.' }
-])
+const logs = ref([])
+
+const connectedRobots = ref<Record<string, boolean>>({
+    r1: false,
+    r2: false,
+    r3: false
+})
+
+async function handleHotspotConnect(id: string) {
+    try {
+        if (connectedRobots.value[id]) {
+            const res = await stopHotspot(id)
+            console.log('Hotspot stopped:', res.data)
+            connectedRobots.value[id] = false
+        } else {
+            const res = await startHotspot(id)
+            console.log('Hotspot started:', res.data)
+            connectedRobots.value[id] = true
+        }
+        const status = await getHotspotStatus(id)
+        console.log('Hotspot status:', status.data)
+    } catch (err) {
+        console.error('Hotspot error:', err)
+    }
+}
+
+const robots = ['r1', 'r2', 'r3']
+
+onMounted(async () => {
+    for (const id of robots) {
+        const status = await getHotspotStatus(id)
+        connectedRobots.value[id] = status.data.connected
+    }
+    serviceStatus.value = true
+    await fetchLogs()
+})
+
+async function fetchLogs() {
+    try {
+        const res = await getCommandLogs()
+        logs.value = res.data.logs.map((log: any) => ({
+            time: log.time,
+            message: typeof log.action === 'string' ? log.action : JSON.stringify(log.action)
+        }))
+        logs.value.reverse()
+    } catch (err) {
+        console.error('Error fetching logs:', err)
+    }
+}
+
+// ✅ محاسبه وضعیت اتصال
+const anyConnected = computed(() => Object.values(connectedRobots.value).some(v => v))
+const connectedRobotList = computed(() => Object.keys(connectedRobots.value).filter(r => connectedRobots.value[r]))
 </script>
+
 <style scoped>
 /* تب‌های کناری */
 .side-tab-container {

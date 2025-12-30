@@ -1,11 +1,11 @@
 export const endpoints = {
     robotCommand: (id: string) => `/robot/${id}/command`,
     robotStatus: (id: string) => `/robot/${id}/status`,
-    groupCommand: '/group/command',
+    groupCommand: (id: string) => `/group/command/${id}`,
     hotspot: {
-        start: '/hotspot/start',
-        stop: '/hotspot/stop',
-        status: '/hotspot/status',
+        start: (id: string) => `/hotspot/${id}/start`,
+        stop: (id: string) => `/hotspot/${id}/stop`,
+        status: (id: string) => `/hotspot/${id}/status`,
     },
     webrtc: {
         offer: (id: string) => `/webrtc/${id}/offer`,

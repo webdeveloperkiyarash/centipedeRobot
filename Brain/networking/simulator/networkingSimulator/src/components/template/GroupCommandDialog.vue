@@ -69,6 +69,7 @@
 import Dialog from '../dialog.vue'
 import { Icon } from '@iconify/vue'
 import { ref, watch, onMounted } from 'vue'
+import { sendGroupCommand } from '../../apis/groupCommand'
 
 defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue'])
@@ -104,12 +105,50 @@ onMounted(() => typeLines(groupLines))
 watch(step, () => {
     if (step.value === 1) typeLines(groupLines)
 })
-
 const leaderRobot = ref('')
 const groupCommand = ref('')
+function computeMotorValues(command: string, current: any[] = [0, 0, 0, 0]): number[] {
+    switch (command) {
+        case 'forward':
+            return current.map(v => v + 0.5)
+        case 'backward':
+            return current.map(v => v - 0.5)
+        case 'left':
+        case 'rotate':
+            return [current[0], current[1] - 0.5, current[2], current[3] - 0.5]
+        case 'right':
+        case 'rotate-reverse':
+            return [current[0], current[1] + 0.5, current[2], current[3] + 0.5]
+        case 'increase-speed':
+            return current.map(v => v + 1)
+        case 'decrease-speed':
+            return current.map(v => v - 1)
+        default:
+            return current
+    }
+}
 
-function applyGroupCommand() {
-    console.log('Leader:', leaderRobot.value, 'Command:', groupCommand.value)
+async function applyGroupCommand() {
+    try {
+        const payload = {
+            robotLeaderId: leaderRobot.value,
+            cmds: [
+                {
+                    robotId: leaderRobot.value,
+                    cmd: groupCommand.value,
+                    value: computeMotorValues(groupCommand.value), // آرایه ۴تایی موتور
+                    timeStamp: new Date().toISOString()
+                }
+            ],
+            timeStamp: new Date().toISOString()
+        }
+        const res = await sendGroupCommand(payload, leaderRobot.value)
+        console.log('Group command sent:', res.data)
+        emit('update:modelValue', false)
+        step.value = 1
+    } catch (err) {
+        console.error('Error sending group command:', err)
+    }
 }
 
 function close() {
@@ -117,6 +156,7 @@ function close() {
     step.value = 1
 }
 </script>
+
 
 <style scoped>
 .dialog-section {

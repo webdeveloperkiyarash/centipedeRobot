@@ -1,11 +1,12 @@
 <template>
-    <Dialog title="Logs info" :model-value="modelValue" @dialog:close="emit('update:modelValue', false)">
+    <Dialog title="Logs info" :model-value="modelValue" @dialog:close="emit('update:modelValue', false)"
+        @dialog:open="emit('open')">
         <div class="logs-dialog-content">
             <p class="logs-description">System logs</p>
             <table class="logs-table">
                 <tr v-for="(log, i) in logs" :key="i">
-                    <td>{{ log.time }}</td>
-                    <td>{{ log.message }}</td>
+                    <td>{{ log.message.replace('_', ' ') }}</td>
+                    <td>{{ log.time.replace('T', ' / ').split('.')[0] }}</td>
                 </tr>
             </table>
         </div>
@@ -14,8 +15,8 @@
 
 <script setup lang="ts">
 import Dialog from '../dialog.vue'
-defineProps<{ modelValue: boolean; logs: any[] }>()
-const emit = defineEmits(['update:modelValue'])
+defineProps<{ modelValue: boolean; logs: { message: string, time: string }[] }>()
+const emit = defineEmits(['update:modelValue', 'open'])
 </script>
 
 <style scoped>
