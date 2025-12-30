@@ -116,8 +116,8 @@
 
         <!-- Footer -->
         <footer class="d-flex flex-center width-full text-center py-2 position-relative">
-            <IconButton theme="default" use-absolute direction="bottom: 2px; left: 2px" icon-size="30"
-                icon="solar:users-group-two-rounded-bold" />
+            <IconButton @click="showGroupCommandDialog = true" theme="default" use-absolute
+                direction="bottom: 2px; left: 2px" icon-size="30" icon="solar:users-group-two-rounded-bold" />
             <p>{{ new Date().getFullYear() }} &copy; copyright</p>
             <IconButton @click="showLogDialogs = true" style="z-index: 100 !important;" theme="blue" use-absolute
                 direction="bottom: 2px; right: 2px" icon-size="30" icon="solar:info-circle-bold" />
@@ -126,16 +126,16 @@
         <Dialog title="Emergency mode" :model-value="showEmergencyDialog"
             @dialog:close="showEmergencyDialog = !showEmergencyDialog">
             <div class="dialog-content">
-                <!-- ناوبری بالا (اختیاری) -->
+                <!-- Top navigation (optional) -->
                 <div class="dialog-steps-indicator">
                     <span :class="['step-dot', step === 1 ? 'active' : '']"></span>
                     <span :class="['step-dot', step === 2 ? 'active' : '']"></span>
                     <span :class="['step-dot', step === 3 ? 'active' : '']"></span>
                 </div>
 
-                <!-- بخش‌ها با ترنزیشن نرم بین جابجایی -->
+                <!-- Sections with smooth transition -->
                 <Transition name="step-fade-slide" mode="out-in">
-                    <!-- بخش اول: توضیح بک‌اند + آیکون‌های انیمیشن‌دار (بلوتوث + اسپینر) -->
+                    <!-- Section 1: Backend explanation + animated icons (Bluetooth + spinner) -->
                     <section v-if="step === 1" key="step-1" class="dialog-section">
                         <div class="d-flex flex-center gap-2 width-full">
                             <Icon icon="svg-spinners:wifi-fade" :width="72" class="icon-spin-slow text-white" />
@@ -148,10 +148,10 @@
                                 {{ line }}
                             </p>
                         </div>
-                        <button class="next-btn" @click="goNext">بعدی</button>
+                        <button class="next-btn" @click="goNext">Next</button>
                     </section>
 
-                    <!-- بخش دوم: توضیح ظاهر سایت + آیکون‌های انیمیشن‌دار -->
+                    <!-- Section 2: Frontend explanation + animated icons -->
                     <section v-else-if="step === 2" key="step-2" class="dialog-section">
                         <div class="d-flex flex-column flex-center width-full">
                             <Icon icon="line-md:alert-loop" :width="72" class="icon-pulse text-red-500" />
@@ -163,14 +163,14 @@
                             </p>
                         </div>
 
-                        <button class="next-btn" @click="goNext">بعدی</button>
+                        <button class="next-btn" @click="goNext">Next</button>
                     </section>
 
-                    <!-- بخش سوم: عنوان + تصویر + دکمه فعال‌سازی -->
+                    <!-- Section 3: Title + image + activation button -->
                     <section v-else key="step-3" class="dialog-section">
-                        <h3 class="section-title">فعال‌سازی حالت اضطراری</h3>
+                        <h3 class="section-title">Activate Emergency Mode</h3>
 
-                        <!-- نام عکس مطابق نام دیالوگ -->
+                        <!-- Image name matches dialog name -->
                         <img src="/images/emergency.png" alt="emergency" class="section-image" />
 
                         <IconButton style="z-index: 100 !important;" :theme="isLocked ? 'red' : 'blue'"
@@ -181,20 +181,20 @@
                 </Transition>
             </div>
         </Dialog>
-        <Dialog title="logs info" :model-value="showLogDialogs" @dialog:close="showLogDialogs = false">
+        <Dialog title="Logs info" :model-value="showLogDialogs" @dialog:close="showLogDialogs = false">
             <div class="logs-dialog-content">
-                <!-- متن توضیحی -->
+                <!-- Description text -->
                 <p class="logs-description">
-                    در این بخش می‌توانید لیست لاگ‌های سیستم را مشاهده کنید. هر لاگ شامل زمان و توضیح مربوطه است.
+                    In this section you can view the system logs. Each log includes a timestamp and a message.
                 </p>
 
-                <!-- جدول لاگ‌ها -->
+                <!-- Logs table -->
                 <div class="logs-table-container">
                     <table class="logs-table">
                         <thead>
                             <tr>
-                                <th>زمان</th>
-                                <th>پیام</th>
+                                <th>Time</th>
+                                <th>Message</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -207,7 +207,6 @@
                 </div>
             </div>
         </Dialog>
-        <!-- Hotspot Dialog -->
         <Dialog title="Hotspot" :model-value="showHotSpotDialog" @dialog:close="showHotSpotDialog = !showHotSpotDialog">
             <div class="d-flex flex-column gap-4 width-full pa-2" :class="theme.switchPrimaryClass">
                 <div v-for="item in 3" :key="item" class="width-full d-flex flex-space-between gap-4 px-2 py-2 radius-2"
@@ -228,6 +227,71 @@
                 </div>
             </div>
         </Dialog>
+        <Dialog title="Group Command" :model-value="showGroupCommandDialog"
+            @dialog:close="showGroupCommandDialog = !showGroupCommandDialog">
+            <div class="dialog-content">
+                <Transition name="step-fade-slide" mode="out-in">
+                    <!-- Section 1: Introduction -->
+                    <section v-if="step === 1" key="step-1" class="dialog-section">
+                        <div class="d-flex flex-center gap-2 width-full">
+                            <Icon icon="svg-spinners:wifi-fade" :width="72" class="icon-spin-slow text-blue-400" />
+                            <Icon icon="svg-spinners:3-dots-fade" :width="72" class="icon-spin-slow text-green-400" />
+                            <div class="d-flex flex-column gap-1">
+                                <Icon icon="line-md:reddit-loop" :width="72" class="icon-spin-slow text-neutral-400" />
+                                <p>robot leader</p>
+                            </div>
+                            <Icon icon="svg-spinners:3-dots-fade" :width="72" class="icon-spin-slow text-green-400" />
+                            <div class="d-flex flex-column gap-1">
+                                <Icon icon="line-md:reddit-loop" :width="48" class="icon-spin-slow text-neutral-400" />
+                                <Icon icon="line-md:reddit-loop" :width="48" class="icon-spin-slow text-neutral-400" />
+                            </div>
+                        </div>
+
+                        <div class="typing-block">
+                            <p v-for="(line, i) in typedGroupLines" :key="'g-' + i" class="typed-line">
+                                {{ line }}
+                            </p>
+                        </div>
+
+                        <button class="next-btn" @click="goNext">Next</button>
+                    </section>
+
+                    <!-- Section 2: Select leader + command -->
+                    <section v-else key="step-2" class="dialog-section">
+                        <h3 class="section-title">Configure Group Command</h3>
+
+                        <div class="form-block">
+                            <!-- Leader Robot Select -->
+                            <label class="form-label">Leader Robot:</label>
+                            <select v-model="leaderRobot" class="form-select">
+                                <option disabled value="">Select a robot</option>
+                                <option value="r1">Robot 1</option>
+                                <option value="r2">Robot 2</option>
+                                <option value="r3">Robot 3</option>
+                            </select>
+                        </div>
+
+                        <div class="form-block">
+                            <!-- Command Select -->
+                            <label class="form-label">Command:</label>
+                            <select v-model="groupCommand" class="form-select">
+                                <option disabled value="">Select a command</option>
+                                <option value="forward">Forward</option>
+                                <option value="backward">Backward</option>
+                                <option value="rotate">Rotate</option>
+                                <option value="rotate-reverse">Rotate Reverse</option>
+                                <option value="turn-left">Turn Left</option>
+                                <option value="turn-right">Turn Right</option>
+                                <option value="increase-speed">Increase Speed</option>
+                                <option value="decrease-speed">Decrease Speed</option>
+                            </select>
+                        </div>
+
+                        <button class="next-btn" @click="applyGroupCommand">Apply Command</button>
+                    </section>
+                </Transition>
+            </div>
+        </Dialog>
     </div>
 </template>
 
@@ -237,36 +301,51 @@ import IconButton from './components/iconButton.vue';
 import { useThemeStore } from './stores/useTheme';
 import { Icon } from '@iconify/vue';
 import { onMounted, ref, watch } from 'vue'
-const selectedRobot = ref('r1') // پیش‌فرض ربات 1
+
+const selectedRobot = ref('r1') // default robot is r1
 const theme = useThemeStore()
+
+// Dialog states
 const showLogDialogs = ref(false);
+const showGroupCommandDialog = ref(false);
 const showHotSpotDialog = ref(false);
 const showEmergencyDialog = ref(false);
+
+// Stepper for emergency & group dialogs
 const step = ref(1)
 const isLocked = ref(false)
+
+// Emergency dialog lines
 const backendLines = [
-    'در بک‌اند، با فعال شدن حالت اضطراری، یک رویداد سراسری منتشر می‌شود.',
-    'تمام ربات‌ها فرمان توقف فوری دریافت می‌کنند.',
-    'کانال‌های ارتباطی (مثلاً MQTT/WebSocket) در وضعیت محدود قرار می‌گیرند.',
-    'وضعیت هر ربات در دیتابیس به حالت emergency تغییر می‌کند.',
-    'ثبت لاگ انجام شده و شناسه‌ی عملیات برای ردیابی ذخیره می‌شود.'
+    'In the backend, when emergency mode is activated, a global event is published.',
+    'All robots receive an immediate stop command.',
+    'Communication channels (e.g., MQTT/WebSocket) are restricted.',
+    'Each robot status in the database changes to emergency.',
+    'Logs are recorded and an operation ID is stored for tracking.'
 ]
 
 const frontendLines = [
-    'در ظاهر سایت، کارت‌های ربات حالت قرمز و هشدار می‌گیرند.',
-    'کنترل‌های حرکتی و دکمه‌ها غیرفعال می‌شوند.',
-    'پیغام هشدار در بالای داشبورد نمایش داده می‌شود.',
-    'بخش لاگ‌ها یک رویداد اضطراری جدید ثبت و برجسته می‌کند.',
-    'امکان خروج از حالت اضطراری فقط از طریق دکمه تأیید مجدد فعال می‌شود.'
+    'On the frontend, robot cards turn red with a warning state.',
+    'Movement controls and buttons are disabled.',
+    'A warning message is displayed at the top of the dashboard.',
+    'The logs section records and highlights a new emergency event.',
+    'Exiting emergency mode is only possible via a confirmation button.'
 ]
 
-/* خروجی تایپ‌شده هر بخش */
+// Group command intro lines
+const groupLines = [
+    'Group Command allows you to control multiple robots at once.',
+    'You can assign a leader robot and synchronize commands for the group.',
+    'This ensures coordinated movement and efficient task execution.'
+]
+
+/* Typed output for each section */
 const typedBackendLines = ref<string[]>([])
 const typedFrontendLines = ref<string[]>([])
+const typedGroupLines = ref<string[]>([])
 
-
-/* تایپ کردن خط‌به‌خط با افکت (JS) — مناسب برای متن‌های خیلی طولانی */
-function typeLines(sourceLines: string[], target: typeof typedBackendLines | typeof typedFrontendLines, speed = 20) {
+/* Typing effect line by line */
+function typeLines(sourceLines: string[], target: typeof typedBackendLines | typeof typedFrontendLines | typeof typedGroupLines, speed = 20) {
     target.value = []
     let lineIndex = 0
     let charIndex = 0
@@ -275,41 +354,35 @@ function typeLines(sourceLines: string[], target: typeof typedBackendLines | typ
         const currentLine = sourceLines[lineIndex] ?? ''
         const currentTyped = (target.value[lineIndex] ?? '')
 
-        // اگر خط جدید شروع شده، آرایه را آماده کن
         if (currentTyped.length === 0 && charIndex === 0) {
             target.value.push('')
         }
 
-        // افزودن کاراکتر بعدی
         if (charIndex < currentLine.length) {
             target.value[lineIndex] = currentLine.slice(0, charIndex + 1)
             charIndex++
         } else {
-            // پایان خط فعلی؛ برو خط بعدی
             lineIndex++
             charIndex = 0
-            if (lineIndex >= sourceLines.length) {
-                // پایان همه خطوط
-                return
-            }
+            if (lineIndex >= sourceLines.length) return
         }
 
-        // اسکرول به پایین برای نمایش خط بعدی در صورت نیاز
         requestAnimationFrame(() => {
             const container = document.querySelector('.dialog-content') as HTMLElement | null
             if (container) container.scrollTop = container.scrollHeight
         })
 
-        setTimeout(tick, speed) // سرعت تایپ
+        setTimeout(tick, speed)
     }
 
     setTimeout(tick, speed)
 }
 
-/* شروع تایپ هر بخش هنگام ورود */
+/* Start typing when step changes */
 function startTypingForStep() {
     if (step.value === 1) {
         typeLines(backendLines, typedBackendLines)
+        typeLines(groupLines, typedGroupLines)
     } else if (step.value === 2) {
         typeLines(frontendLines, typedFrontendLines)
     }
@@ -328,14 +401,23 @@ function toggleEmergency() {
     isLocked.value = !isLocked.value
 }
 
+// Example logs
 const logs = ref([
-    { time: '2025-12-29 22:10', message: 'سیستم راه‌اندازی شد.' },
-    { time: '2025-12-29 22:12', message: 'ارتباط با ربات شماره 1 برقرار شد.' },
-    { time: '2025-12-29 22:13', message: 'حالت اضطراری فعال شد.' },
-    { time: '2025-12-29 22:14', message: 'ارتباط با دیتابیس بررسی شد.' },
-    { time: '2025-12-29 22:15', message: 'کاربر وارد سیستم شد.' },
-    // می‌تونی هر تعداد لاگ اضافه کنی
+    { time: '2025-12-29 22:10', message: 'System started.' },
+    { time: '2025-12-29 22:12', message: 'Connection established with robot 1.' },
+    { time: '2025-12-29 22:13', message: 'Emergency mode activated.' },
+    { time: '2025-12-29 22:14', message: 'Database connection checked.' },
+    { time: '2025-12-29 22:15', message: 'User logged in.' },
 ])
+
+// Group command selections
+const leaderRobot = ref('')
+const groupCommand = ref('')
+
+function applyGroupCommand() {
+    console.log('Leader:', leaderRobot.value, 'Command:', groupCommand.value)
+    // Implement backend logic here
+}
 </script>
 
 <style scoped>
@@ -660,5 +742,24 @@ body.theme-light .button-style-success {
     transform: scale(0.94);
     background-color: rgba(3, 46, 21, 0.8);
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
+}
+
+.form-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.form-label {
+    font-weight: bold;
+    text-align: left;
+}
+
+.form-select {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 </style>
